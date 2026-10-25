@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghost Data Intelligence — Deletion Audit & Risk Telemetry</title>
+  <meta name="description" content="Enterprise deletion audit intelligence platform for detecting residual personal data, replica drift, active sync flows, and restore risks.">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Fixed White Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm5.13 12.09A7.94 7.94 0 0 1 12 20c-1.92 0-3.69-.69-5.13-1.91A5.99 5.99 0 0 1 12 15c2.16 0 4.07 1.15 5.13 3.09z"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="brand-title">Ghost Data</span>
+          <span class="brand-subtitle">Intelligence</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Navigation</div>
+        <a class="nav-item active" data-tab="overview">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-tab="explorer">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span>Case Explorer</span>
+          <span class="nav-counter">518</span>
+        </a>
+        <a class="nav-item" data-tab="radar">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z"></path></svg>
+          <span>Risk Topology</span>
+        </a>
+        <a class="nav-item" data-tab="rules">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Policy Rules Matrix</span>
+          <span class="nav-counter">15</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="audit-status-card">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>Audit Pipeline Active</span>
+          </div>
+          <div class="audit-meta-text">
+            Cutoff Integrity: <strong>100% Valid</strong><br>
+            Temporal Violations: <strong>0</strong><br>
+            Evaluation Accuracy: <strong>90.6%</strong>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Canvas Content Area -->
+    <main class="main-wrapper">
+      
+      <!-- Sticky Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <h1 id="page-title" class="page-title">Audit Intelligence Dashboard</h1>
+          <span class="badge-tag">HackerRank Orchestrate</span>
+        </div>
+
+        <div class="header-right">
+          <div class="header-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="header-search-input" placeholder="Search case ID, email, resource..." aria-label="Search cases">
+          </div>
+          <button id="export-filtered-btn" class="btn-primary" title="Export Current Filtered Ledger to CSV">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Body Container -->
+      <div class="page-body">
+        
+        <!-- View 1: Overview Dashboard -->
+        <section id="view-overview" class="view-section">
+          
+          <!-- 4 White KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card kpi-primary">
+              <div class="kpi-header">
+                <span class="kpi-title">Total Deletion Requests</span>
+                <div class="kpi-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                </div>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value">518</span>
+                <span class="kpi-badge badge-primary">100% Processed</span>
+              </div>
+              <p class="kpi-desc">Total requests audited against ground-truth evidence at cutoff.</p>
+            </div>
+
+            <div class="kpi-card kpi-critical">
+              <div class="kpi-header">
+                <span class="kpi-title">Ghost Data / Incomplete</span>
+                <div class="kpi-icon-wrap">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value">342</span>
+                <span class="kpi-badge badge-critical">66.0% Incomplete</span>
+              </div>
+              <p class="kpi-desc">Requests reported complete where ghost records or sync flows remain.</p>
+            </div>
+
+            <div class="kpi-card kpi-success">
+              <div class="kpi-header">
+                <span class="kpi-title">Complete & Verified</span>
+                <div class="kpi-icon-wrap">
+                  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value">166</span>
+                <span class="kpi-badge badge-success">32.0% Complete</span>
+              </div>
+              <p class="kpi-desc">Provably deleted with evidence-backed verification checks at cutoff.</p>
+            </div>
+
+            <div class="kpi-card kpi-warning">
+              <div class="kpi-header">
+                <span class="kpi-title">Non-Deletion Requests</span>
+                <div class="kpi-icon-wrap">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                </div>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value">10</span>
+                <span class="kpi-badge badge-warning">1.9% N/A</span>
+              </div>
+              <p class="kpi-desc">Access, correction, or marketing inquiries classified as NOT_APPLICABLE.</p>
+            </div>
+          </div>
+
+          <!-- Charts & Analytics Row -->
+          <div class="analytics-grid" style="margin-top: 24px;">
+            
+            <!-- Left Card: System Ghost Risk Distribution -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3 class="card-title">Ghost Data Distribution by System</h3>
+                  <span class="card-subtitle">Surviving copies, active connectors, and unredacted PII</span>
+                </div>
+              </div>
+              <div id="top-systems-risk-list" class="system-risk-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Right Card: Audit Decision Summary -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3 class="card-title">Audit Verdict Breakdown</h3>
+                  <span class="card-subtitle">Final evaluated deletion status</span>
+                </div>
+              </div>
+              <div class="stat-breakdown-list">
+                <div class="stat-breakdown-item">
+                  <div class="stat-left">
+                    <span class="legend-indicator legend-critical"></span>
+                    <span class="stat-name">INCOMPLETE</span>
+                  </div>
+                  <div class="stat-val-group">
+                    <span class="stat-val">342</span>
+                    <span class="stat-pct">(66.0%)</span>
+                  </div>
+                </div>
+
+                <div class="stat-breakdown-item">
+                  <div class="stat-left">
+                    <span class="legend-indicator legend-success"></span>
+                    <span class="stat-name">COMPLETE</span>
+                  </div>
+                  <div class="stat-val-group">
+                    <span class="stat-val">166</span>
+                    <span class="stat-pct">(32.0%)</span>
+                  </div>
+                </div>
+
+                <div class="stat-breakdown-item">
+                  <div class="stat-left">
+                    <span class="legend-indicator legend-secondary"></span>
+                    <span class="stat-name">NOT_APPLICABLE</span>
+                  </div>
+                  <div class="stat-val-group">
+                    <span class="stat-val">10</span>
+                    <span class="stat-pct">(1.9%)</span>
+                  </div>
+                </div>
+
+                <div style="padding-top: 10px; border-top: 1px solid var(--border-light); font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
+                  <strong>Audit Policy Insight:</strong> 87% of incomplete cases were reported by internal workflows as <code>COMPLETE</code>, yet retained data in secondary replicas or search indices.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Incomplete Findings Table -->
+          <div class="card" style="margin-top: 24px;">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3 class="card-title">Sample High-Risk Incomplete Deletion Requests</h3>
+                <span class="card-subtitle">Click any record to inspect the complete remediation timeline and evidence</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Subject Email</th>
+                    <th>Workflow Claim</th>
+                    <th>Policy Violations</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-critical-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 2: Case Audit Explorer -->
+        <section id="view-explorer" class="view-section" style="display: none;">
+          
+          <!-- Filter Controls Bar -->
+          <div class="filter-bar">
+            <div class="filter-chips">
+              <button class="filter-chip active" data-status="ALL">All (518)</button>
+              <button class="filter-chip" data-status="INCOMPLETE">Incomplete (342)</button>
+              <button class="filter-chip" data-status="COMPLETE">Complete (166)</button>
+              <button class="filter-chip" data-status="NOT_APPLICABLE">Not Applicable (10)</button>
+            </div>
+
+            <div class="filter-selects">
+              <select id="filter-system-select" class="select-input" aria-label="Filter by system">
+                <option value="ALL">All Systems</option>
+                <option value="account_service">account_service</option>
+                <option value="search_service">search_service</option>
+                <option value="export_service">export_service</option>
+                <option value="analytics_platform">analytics_platform</option>
+                <option value="integration_service">integration_service</option>
+                <option value="backup_service">backup_service</option>
+                <option value="support_platform">support_platform</option>
+                <option value="identity_service">identity_service</option>
+                <option value="marketing_service">marketing_service</option>
+              </select>
+
+              <select id="filter-risk-select" class="select-input" aria-label="Filter by risk category">
+                <option value="ALL">All Risk Types</option>
+                <option value="FLOW">Active Data Flows</option>
+                <option value="RESTORE">Backup Restore Risks</option>
+                <option value="PII">Exposed PII / Unredacted</option>
+                <option value="RECORD">Surviving Records</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Main Cases Data Table -->
+          <div class="table-card" style="margin-top: 20px;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Subject Identity</th>
+                    <th>Claimed Status</th>
+                    <th>Audited Status</th>
+                    <th>Violations</th>
+                    <th>Remediation</th>
+                    <th>Affected Systems</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="case-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="table-pagination">
+              <div id="pagination-info" class="pagination-info">Showing 1 to 15 of 518 cases</div>
+              <div class="pagination-controls">
+                <button id="prev-page-btn" class="page-btn" aria-label="Previous page">&larr;</button>
+                <div id="pagination-pages" style="display: flex; gap: 4px;"></div>
+                <button id="next-page-btn" class="page-btn" aria-label="Next page">&rarr;</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 3: Ghost Risk Radar & Topology -->
+        <section id="view-radar" class="view-section" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3 class="card-title">Ghost Data Recreation Vectors</h3>
+                <span class="card-subtitle">Primary mechanisms through which deleted data returns to production</span>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+              <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <span class="step-phase-badge badge-phase-finding">VECTOR 01</span>
+                  <strong style="font-size: 14px;">Active Integration Sync Flows</strong>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+                  Third-party connectors and internal synchronization jobs continue copying customer profiles from caching tiers or regional read replicas back to primary databases.
+                </p>
+                <div style="font-size: 11px; font-weight: 600; color: var(--primary);">
+                  Required Action: <code>DISABLE_DATA_FLOW</code> before changing record copies.
+                </div>
+              </div>
+
+              <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <span class="step-phase-badge badge-phase-finding">VECTOR 02</span>
+                  <strong style="font-size: 14px;">Automated Backup Restore Paths</strong>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+                  Point-in-time snapshot recovery scripts and scheduled failover routines recreate user profiles if backup metadata is not explicitly blocked.
+                </p>
+                <div style="font-size: 11px; font-weight: 600; color: var(--primary);">
+                  Required Action: <code>BLOCK_RESTORE</code> to prevent secondary resurrection.
+                </div>
+              </div>
+
+              <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <span class="step-phase-badge badge-phase-finding">VECTOR 03</span>
+                  <strong style="font-size: 14px;">Stale Search Index Documents</strong>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+                  Customer search documents in Elasticsearch / Lucene remain queryable when primary account deletions fail to emit index invalidation events.
+                </p>
+                <div style="font-size: 11px; font-weight: 600; color: var(--primary);">
+                  Required Action: Explicit <code>DELETE_RECORD</code> on <code>search_service</code>.
+                </div>
+              </div>
+
+              <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <span class="step-phase-badge badge-phase-finding">VECTOR 04</span>
+                  <strong style="font-size: 14px;">Unexpired Customer Data Exports</strong>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+                  Archival export bundles (JSON/CSV) generated for GDPR data portability requests remain available for download on S3/blob storage.
+                </p>
+                <div style="font-size: 11px; font-weight: 600; color: var(--primary);">
+                  Required Action: Invalidate and <code>DELETE_RECORD</code> on <code>export_service</code>.
+                </div>
+              </div>
+            </div>
+
+            <!-- Remediation Order Diagram -->
+            <div style="margin-top: 24px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
+              <h4 style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Deterministic Remediation Pipeline Order</h4>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px;">
+                <span class="step-phase-badge badge-phase-remediation">1. DISABLE_DATA_FLOW</span>
+                <span>&rarr;</span>
+                <span class="step-phase-badge badge-phase-remediation">2. BLOCK_RESTORE</span>
+                <span>&rarr;</span>
+                <span class="step-phase-badge badge-phase-remediation">3. DELETE_RECORD</span>
+                <span>&rarr;</span>
+                <span class="step-phase-badge badge-phase-remediation">4. REDACT_RECORD</span>
+                <span>&rarr;</span>
+                <span class="step-phase-badge badge-phase-remediation">5. ANONYMIZE_RECORD</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 4: Policy & Rules Matrix -->
+        <section id="view-rules" class="view-section" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3 class="card-title">Platform Deletion Rules Matrix</h3>
+                <span class="card-subtitle">Exact 15 policy requirements specified in dataset/deletion_rules.csv</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rule ID</th>
+                    <th>Data Category</th>
+                    <th>Required Action</th>
+                    <th>Governed Systems</th>
+                    <th>Trigger Condition</th>
+                    <th>Legal / Compliance Description</th>
+                  </tr>
+                </thead>
+                <tbody id="rules-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Interactive Investigation Modal -->
+  <div id="case-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700;">Case Investigation Dossier</h2>
+        </div>
+        <button id="modal-close-btn" class="modal-close-btn" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="modal-body-content" class="modal-body">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

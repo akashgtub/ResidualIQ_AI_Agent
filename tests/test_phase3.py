@@ -523,6 +523,40 @@ class TestDeletionAuditor(unittest.TestCase):
         ops = [s["operation"] for s in res.steps]
         self.assertIn(Operation.REPORT_REMAINING_RECORD.value, ops)
 
+    def test_batch_request_disambiguation(self):
+        """Batch of requests with the same reported_at are disambiguated deterministically."""
+        auditor = DeletionAuditor(
+            classifier=MockIntentClassifier(is_del=True),
+            resolver=MockIdentityResolver(),
+            manager=MockEvidenceManager([]),
+        )
+        reqs = [
+            {"case_id": "case_101", "email": "synthetic.user@example.com", "reported_status": "COMPLETE", "reported_at": "2026-09-02T12:00:00Z"},
+            {"case_id": "case_102", "email": "synthetic.user@example.com", "reported_status": "COMPLETE", "reported_at": "2026-09-02T12:00:00Z"},
+        ]
+        auditor.index_requests(reqs)
+        self.assertIn("2026-09-02T12:00:00Z", auditor._requests_by_reported_at)
+        self.assertEqual(len(auditor._requests_by_reported_at["2026-09-02T12:00:00Z"]), 2)
+
+    def test_non_complete_account_status_matching(self):
+        """Non-complete cases match FAILED or PARTIAL account actions rather than SUCCESS."""
+        auditor = DeletionAuditor(
+            classifier=MockIntentClassifier(is_del=True),
+            resolver=MockIdentityResolver(),
+            manager=MockEvidenceManager([]),
+        )
+        res = auditor.audit_case(
+            case_id="case_test_partial",
+            email="synthetic.user@example.com",
+            requested_at="2026-08-27T12:00:00Z",
+            reported_status="PARTIALLY_COMPLETE",
+            reported_at="2026-08-30T12:00:00Z",
+            audit_at="2026-09-15T12:00:00Z",
+            request_text="Delete my account.",
+        )
+        self.assertEqual(res.deletion_status, DeletionStatus.COMPLETE)
+
 
 if __name__ == "__main__":
     unittest.main()
+

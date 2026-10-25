@@ -474,10 +474,17 @@ class EvidenceManager:
                 event_time = ts_match.group(1) if ts_match else captured_at
 
                 kv_dict = {}
-                for m in LOG_KV_REGEX.finditer(line):
-                    k = m.group(1)
-                    v = m.group(2) if m.group(2) is not None else m.group(3)
-                    kv_dict[k] = v
+                if "{" in line and "}" in line:
+                    try:
+                        json_str = line[line.index("{"):line.rindex("}") + 1]
+                        kv_dict = json.loads(json_str)
+                    except Exception:
+                        kv_dict = {}
+                if not kv_dict:
+                    for m in LOG_KV_REGEX.finditer(line):
+                        k = m.group(1)
+                        v = m.group(2) if m.group(2) is not None else m.group(3)
+                        kv_dict[k] = v
 
                 trace_id = kv_dict.get("trace_id", "")
                 if trace_id:
@@ -485,8 +492,8 @@ class EvidenceManager:
                         trace_identifiers[trace_id] = set()
                     for key in ["lookup_key", "subject_key", "matched_value", "correlation_key", "subject_ref", "user_id"]:
                         val = kv_dict.get(key)
-                        if val and val != "no direct identifier":
-                            trace_identifiers[trace_id].add(val.strip())
+                        if val and val != "no direct identifier" and val != "null":
+                            trace_identifiers[trace_id].add(str(val).strip())
 
                 raw_log_lines.append((line, event_time, kv_dict))
 
@@ -520,6 +527,9 @@ class EvidenceManager:
                 state = "ABSENT"
             elif kv_dict.get("result") == "hit" or kv_dict.get("rows") == "1":
                 state = "PRESENT"
+            elif system_id == "analytics_platform":
+                is_attributable = any(kv_dict.get(k) and kv_dict[k] != "null" for k in ["email", "customer_reference", "user_id"])
+                state = "PRESENT" if is_attributable else "ANONYMIZED"
 
             item = EvidenceItem(
                 evidence_id=file_id,
@@ -701,6 +711,7 @@ class EvidenceManager:
                             "customer_name",
                             "requester_name",
                             "display_name",
+                            "query",
                         ]:
                             if rec.get(k):
                                 identifiers.add(str(rec[k]).strip())
@@ -847,6 +858,8 @@ class EvidenceManager:
                 identifiers.add(m.group(0))
 
             ev_type = str(row["event_type"]).strip().upper()
+            if ev_type == "LINK_RESOURCE_IDENTITY":
+                continue
             state = "PRESENT"
             if res_val == "SUCCESS":
                 if ev_type == "DELETE_RECORD":

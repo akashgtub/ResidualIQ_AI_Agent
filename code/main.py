@@ -64,6 +64,8 @@ def run_pipeline(
         reader = csv.DictReader(f)
         requests = list(reader)
 
+    auditor.index_requests(requests)
+
     total_requests = len(requests)
     print(f"Total requests to process: {total_requests}")
 
