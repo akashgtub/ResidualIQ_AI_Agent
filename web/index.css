@@ -1242,15 +1242,16 @@ html, body {
   box-shadow: var(--shadow-modal);
   padding: 6px;
   min-width: 280px;
-  z-index: 120;
+  z-index: 250;
   display: none;
   flex-direction: column;
   gap: 2px;
   animation: fadeInDown 0.18s ease-out;
 }
 
-.export-menu.open {
-  display: flex;
+.export-menu.open,
+.export-menu.show {
+  display: flex !important;
 }
 
 @keyframes fadeInDown {
