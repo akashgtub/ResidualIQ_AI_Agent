@@ -714,3 +714,139 @@ repo_root=C:\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
 
+## 2026-10-25T18:15:35+05:30 ResidualQ AI Agent Branding & Enterprise CSV Export
+
+User Prompt (verbatim, secrets redacted):
+Act as a senior full-stack engineer. Fix the branding and CSV export functionality in my existing HackerRank Orchestrate project.
+
+## Task 1: Rename the product
+
+Rename the user-facing application from "Ghost Data AI", "Ghost Data Intelligence", or any previous product name to:
+
+**ResidualQ AI Agent**
+
+Tagline: "AI-Powered Data Deletion Auditing & Verification"
+
+Search the entire frontend for old branding, including:
+- Sidebar logo and product title
+- Dashboard header and page titles
+- Browser tab title and favicon text, if applicable
+- Login or welcome screens, if present
+- Loading screens, empty states, and error messages
+- Footer, navigation, and README references related to the displayed product name
+
+Use "ResidualQ AI Agent" consistently.
+
+IMPORTANT:
+- Do not rename the HackerRank challenge itself if its official name is required in documentation.
+- Do not rename Python modules, internal classes, API routes, or project directories unnecessarily.
+- Do not change audit logic or output.csv data merely to rename the application.
+
+## Task 2: Diagnose and fix CSV export
+
+The CSV export feature is not working properly. Do not assume the cause. Trace the entire export flow from the UI button to the generated file.
+
+### A. Investigate
+Inspect:
+- The export/download button and its click handler
+- React state and data transformations
+- The backend API, if the export uses one
+- The actual output.csv path and its contents
+- Browser console errors and network responses
+- CSV serialization, response headers, and download logic
+
+Identify the root cause before implementing the fix.
+
+### B. Correct CSV generation and download
+
+The export must:
+1. Export the actual filtered or selected audit results when the UI offers those options.
+2. Export all audit results when the user chooses "Export All".
+3. Produce a valid, downloadable .csv file with a meaningful filename, such as `residualq_audit_results.csv`.
+4. Include the required columns and preserve the existing challenge schema when exporting the official submission file:
+   `case_id,deletion_status,steps_json`
+5. Correctly escape commas, quotation marks, and newlines in CSV values.
+6. Preserve steps_json as a valid JSON array encoded inside its CSV cell.
+7. Support Unicode characters and open correctly in common spreadsheet applications.
+8. Prevent double-clicks or repeated requests from generating duplicate downloads.
+9. Show clear loading, success, and error feedback.
+10. Handle empty results, missing output files, malformed rows, and backend failures gracefully.
+
+Do not export an HTML table renamed as .csv. Do not truncate data or silently discard rows.
+
+### C. Protect the official submission
+
+The dashboard export and official submission file must be treated separately.
+
+- Do not modify the required root output.csv schema.
+- Do not overwrite output.csv when the user downloads a filtered dashboard report.
+- Never use sample_output.csv to populate production predictions.
+- Keep the existing auditing pipeline and evidence-grounding rules intact.
+- If a separate user-friendly report is needed, generate it as a separate download rather than changing the official submission format.
+
+## Task 3: Preserve the visual design
+
+Keep the existing professional light theme:
+- White cards and sidebar
+- Very light lavender page background
+- Purple primary buttons and active navigation
+- Dark plum text
+- Subtle lavender borders and shadows
+- Green, amber, and red status indicators
+
+Make the Export CSV button visually consistent and ensure it is visible, accessible, and functional on desktop and mobile.
+
+## Task 4: Test everything
+
+- Test the export button from the actual dashboard.
+- Verify the downloaded file exists and has the .csv extension.
+- Check the exact header and row count.
+- Parse the exported CSV with a CSV parser.
+- Verify steps_json can be parsed as JSON for every exported row.
+- Test full export, filtered export, empty results, and error handling where applicable.
+- Run all existing Python tests and the frontend production build.
+- Confirm that root output.csv was not unintentionally modified.
+- Verify the product name is consistent across the frontend.
+
+## Final response
+
+Report:
+1. The actual root cause of the CSV export problem.
+2. The files changed.
+3. What was changed in the branding.
+4. The number of rows successfully exported in each relevant test.
+5. Test and build results.
+6. Any remaining limitations.
+
+Do not claim the export works unless you have actually tested the downloaded file. Do not create submission ZIP files until explicitly authorized.
+
+Agent Response Summary:
+Diagnosed the root causes of the CSV export failure (RFC 4180 escaping absence, data URI payload truncation on large multi-step JSON strings, missing UTF-8 BOM causing Excel encoding issues, bundle load race conditions, missing debounce protection, and schema mismatch). Replaced the export engine with a robust RFC 4180 encoder, UTF-8 BOM Blob streaming downloader, an enterprise dropdown with 4 dedicated export modes (Official Submission schema vs Detailed Audit Report, both supporting All and Filtered views), dynamic bundle readiness polling, and interactive toast notifications. Completely rebranded the frontend to 'ResidualQ AI Agent' with tagline 'AI-Powered Data Deletion Auditing & Verification' across page title, sidebar, headers, badges, and documentation while strictly preserving the light theme and protecting root output.csv. Validated end-to-end via headless Chrome CDP testing and Python CSV parsing, confirming 518/518 bit-for-bit match on official submission, 342 rows on filtered incomplete cases, valid JSON for all rows, 0 specification errors, and 62/62 pytest tests passing.
+
+Actions:
+* replace_file_content index.html
+* write_to_file web/app.js
+* replace_file_content web/index.html
+* replace_file_content web/index.css
+* write_to_file scratch/generate_web_data.py
+* run_command python scratch/generate_web_data.py
+* write_to_file scratch/test_browser_export.js
+* write_to_file scratch/test_all_exports.js
+* run_command node scratch/test_all_exports.js
+* run_command node scratch/test_browser_export.js
+* write_to_file scratch/validate_csv_exports.py
+* run_command python scratch/validate_csv_exports.py
+* run_command pytest tests/ -v
+* run_command python scratch/validate_output.py
+* replace_file_content README.md
+* replace_file_content log.txt
+
+Context:
+tool=Antigravity
+model=Gemini 3.8 Flash (High)
+branch=main
+repo_root=C:\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+

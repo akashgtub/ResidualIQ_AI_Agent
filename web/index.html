@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ghost Data Intelligence — Deletion Audit & Risk Telemetry</title>
-  <meta name="description" content="Enterprise deletion audit intelligence platform for detecting residual personal data, replica drift, active sync flows, and restore risks.">
+  <title>ResidualQ AI Agent — AI-Powered Data Deletion Auditing & Verification</title>
+  <meta name="description" content="ResidualQ AI Agent: AI-Powered Data Deletion Auditing & Verification platform for detecting residual personal data, replica drift, active sync flows, and restore risks.">
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -13,14 +13,17 @@
     <!-- Fixed White Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="logo-badge">
+        <div class="logo-badge" title="ResidualQ AI Agent">
           <svg viewBox="0 0 24 24">
             <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm5.13 12.09A7.94 7.94 0 0 1 12 20c-1.92 0-3.69-.69-5.13-1.91A5.99 5.99 0 0 1 12 15c2.16 0 4.07 1.15 5.13 3.09z"/>
           </svg>
         </div>
         <div class="logo-text">
-          <span class="brand-title">Ghost Data</span>
-          <span class="brand-subtitle">Intelligence</span>
+          <div style="display: flex; align-items: baseline; gap: 5px;">
+            <span class="brand-title">ResidualQ</span>
+            <span class="brand-subtitle">AI Agent</span>
+          </div>
+          <span class="brand-tagline">AI-Powered Data Deletion Auditing &amp; Verification</span>
         </div>
       </div>
 
@@ -50,7 +53,7 @@
         <div class="audit-status-card">
           <div class="status-pill">
             <span class="status-dot"></span>
-            <span>Audit Pipeline Active</span>
+            <span>ResidualQ Agent Active</span>
           </div>
           <div class="audit-meta-text">
             Cutoff Integrity: <strong>100% Valid</strong><br>
@@ -67,8 +70,8 @@
       <!-- Sticky Top Header -->
       <header class="top-header">
         <div class="header-left">
-          <h1 id="page-title" class="page-title">Audit Intelligence Dashboard</h1>
-          <span class="badge-tag">HackerRank Orchestrate</span>
+          <h1 id="page-title" class="page-title">ResidualQ Audit Intelligence Dashboard</h1>
+          <span class="badge-tag">ResidualQ AI Agent</span>
         </div>
 
         <div class="header-right">
@@ -79,14 +82,57 @@
             </svg>
             <input type="text" id="header-search-input" placeholder="Search case ID, email, resource..." aria-label="Search cases">
           </div>
-          <button id="export-filtered-btn" class="btn-primary" title="Export Current Filtered Ledger to CSV">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Export CSV</span>
-          </button>
+
+          <!-- Enterprise CSV Export Dropdown -->
+          <div class="export-dropdown">
+            <button id="export-dropdown-toggle" class="btn-primary" aria-haspopup="true" aria-expanded="false" title="Export Audit Results to CSV">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span id="export-btn-label">Export CSV</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 2px;">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="export-menu" class="export-menu" role="menu">
+              <div class="export-section-label">Official Submission Format</div>
+              <button class="export-item" id="export-submission-all-btn" role="menuitem">
+                <div>
+                  <div>Export All (518 Cases)</div>
+                  <div class="export-item-desc">case_id,deletion_status,steps_json</div>
+                </div>
+                <span class="export-item-badge">submission</span>
+              </button>
+              <button class="export-item" id="export-submission-filtered-btn" role="menuitem">
+                <div>
+                  <div>Export Filtered Cases</div>
+                  <div class="export-item-desc">Preserves official submission schema</div>
+                </div>
+                <span class="export-item-badge" id="export-filtered-badge">filtered</span>
+              </button>
+
+              <div class="export-divider"></div>
+
+              <div class="export-section-label">Detailed Audit Report</div>
+              <button class="export-item" id="export-detailed-all-btn" role="menuitem">
+                <div>
+                  <div>Export Full Audit Report</div>
+                  <div class="export-item-desc">All columns formatted for Excel / Sheets</div>
+                </div>
+                <span class="export-item-badge">report</span>
+              </button>
+              <button class="export-item" id="export-detailed-filtered-btn" role="menuitem">
+                <div>
+                  <div>Export Filtered Report</div>
+                  <div class="export-item-desc">Summary report for active filtered view</div>
+                </div>
+                <span class="export-item-badge">report</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </header>
 
@@ -114,7 +160,7 @@
 
             <div class="kpi-card kpi-critical">
               <div class="kpi-header">
-                <span class="kpi-title">Ghost Data / Incomplete</span>
+                <span class="kpi-title">Residual Data / Incomplete</span>
                 <div class="kpi-icon-wrap">
                   <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 </div>
@@ -123,7 +169,7 @@
                 <span class="kpi-value">342</span>
                 <span class="kpi-badge badge-critical">66.0% Incomplete</span>
               </div>
-              <p class="kpi-desc">Requests reported complete where ghost records or sync flows remain.</p>
+              <p class="kpi-desc">Requests reported complete where residual records or sync flows remain.</p>
             </div>
 
             <div class="kpi-card kpi-success">
@@ -158,11 +204,11 @@
           <!-- Charts & Analytics Row -->
           <div class="analytics-grid" style="margin-top: 24px;">
             
-            <!-- Left Card: System Ghost Risk Distribution -->
+            <!-- Left Card: System Residual Risk Distribution -->
             <div class="card">
               <div class="card-header">
                 <div class="card-title-group">
-                  <h3 class="card-title">Ghost Data Distribution by System</h3>
+                  <h3 class="card-title">Residual Data Distribution by System</h3>
                   <span class="card-subtitle">Surviving copies, active connectors, and unredacted PII</span>
                 </div>
               </div>
@@ -214,7 +260,7 @@
                 </div>
 
                 <div style="padding-top: 10px; border-top: 1px solid var(--border-light); font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
-                  <strong>Audit Policy Insight:</strong> 87% of incomplete cases were reported by internal workflows as <code>COMPLETE</code>, yet retained data in secondary replicas or search indices.
+                  <strong>Audit Policy Insight:</strong> ResidualQ detected that 87% of incomplete cases were reported by internal workflows as <code>COMPLETE</code>, yet retained data in secondary replicas or search indices.
                 </div>
               </div>
             </div>
@@ -317,12 +363,12 @@
           </div>
         </section>
 
-        <!-- View 3: Ghost Risk Radar & Topology -->
+        <!-- View 3: Risk Radar & Topology -->
         <section id="view-radar" class="view-section" style="display: none;">
           <div class="card">
             <div class="card-header">
               <div class="card-title-group">
-                <h3 class="card-title">Ghost Data Recreation Vectors</h3>
+                <h3 class="card-title">Residual Data Recreation Vectors</h3>
                 <span class="card-subtitle">Primary mechanisms through which deleted data returns to production</span>
               </div>
             </div>
@@ -383,7 +429,7 @@
 
             <!-- Remediation Order Diagram -->
             <div style="margin-top: 24px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
-              <h4 style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Deterministic Remediation Pipeline Order</h4>
+              <h4 style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">ResidualQ Deterministic Remediation Pipeline Order</h4>
               <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px;">
                 <span class="step-phase-badge badge-phase-remediation">1. DISABLE_DATA_FLOW</span>
                 <span>&rarr;</span>
@@ -437,7 +483,7 @@
     <div class="modal-container">
       <div class="modal-header">
         <div class="modal-title-group">
-          <h2 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700;">Case Investigation Dossier</h2>
+          <h2 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700;">ResidualQ Case Investigation Dossier</h2>
         </div>
         <button id="modal-close-btn" class="modal-close-btn" aria-label="Close modal">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -451,6 +497,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
   <!-- Scripts -->
   <script src="data.js"></script>

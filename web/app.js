@@ -1,16 +1,14 @@
 /**
- * Ghost Data Intelligence — Enterprise Audit Frontend Logic
+ * ResidualQ AI Agent — Enterprise Deletion Audit Frontend Logic
  * Strictly Vanilla JS, accessible, reactive, and modular.
  */
 
 (function () {
   'use strict';
 
-  // Verify data is loaded
-  const data = window.GHOST_DATA;
-  if (!data || !data.cases) {
-    console.error('Ghost Data bundle not found. Please ensure data.js is loaded.');
-    return;
+  // Dynamic Data Accessor (prevents race conditions if data bundle loads asynchronously)
+  function getData() {
+    return window.RESIDUALQ_DATA || window.GHOST_DATA || null;
   }
 
   // App State
@@ -46,7 +44,15 @@
     modalOverlay: document.getElementById('case-modal'),
     modalCloseBtn: document.getElementById('modal-close-btn'),
     modalBody: document.getElementById('modal-body-content'),
-    exportBtn: document.getElementById('export-filtered-btn'),
+    exportDropdownToggle: document.getElementById('export-dropdown-toggle'),
+    exportMenu: document.getElementById('export-menu'),
+    exportBtnLabel: document.getElementById('export-btn-label'),
+    exportFilteredBadge: document.getElementById('export-filtered-badge'),
+    exportSubmissionAllBtn: document.getElementById('export-submission-all-btn'),
+    exportSubmissionFilteredBtn: document.getElementById('export-submission-filtered-btn'),
+    exportDetailedAllBtn: document.getElementById('export-detailed-all-btn'),
+    exportDetailedFilteredBtn: document.getElementById('export-detailed-filtered-btn'),
+    toastContainer: document.getElementById('toast-container'),
   };
 
   // Helper: Format ISO timestamp cleanly
@@ -95,6 +101,43 @@
     }
   }
 
+  // Helper: Show Toast Notification
+  function showToast(message, type = 'info', duration = 3500) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    } else if (type === 'error') {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+    } else if (type === 'warning') {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+    } else {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+    }
+
+    toast.innerHTML = `
+      ${iconSvg}
+      <div class="toast-message">${message}</div>
+    `;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      toast.style.transition = 'all 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
   // 1. Navigation & Routing
   function initNavigation() {
     elements.navItems.forEach((btn) => {
@@ -130,10 +173,10 @@
 
     // Update Header Titles
     const titles = {
-      overview: { title: 'Audit Intelligence Dashboard', subtitle: 'Global Deletion Verification & Ghost Risk Telemetry' },
-      explorer: { title: 'Case Audit Explorer', subtitle: 'Interactive verification ledger across 518 evaluation requests' },
-      radar: { title: 'Ghost Risk Topology', subtitle: 'Replication drift, active connectors, and unpurged data flows' },
-      rules: { title: 'Policy & Deletion Rules Matrix', subtitle: '15 Ground-truth treatment classifications from deletion_rules.csv' },
+      overview: { title: 'ResidualQ Audit Intelligence Dashboard', subtitle: 'Global Deletion Verification & Risk Telemetry' },
+      explorer: { title: 'ResidualQ Case Audit Explorer', subtitle: 'Interactive verification ledger across 518 evaluation requests' },
+      radar: { title: 'ResidualQ Risk Topology', subtitle: 'Replication drift, active connectors, and unpurged data flows' },
+      rules: { title: 'ResidualQ Policy & Deletion Rules Matrix', subtitle: '15 Ground-truth treatment classifications from deletion_rules.csv' },
     };
 
     const currentMeta = titles[tabId] || titles.overview;
@@ -145,6 +188,8 @@
 
   // 2. Filter & Search Logic
   function getFilteredCases() {
+    const data = getData();
+    if (!data || !data.cases) return [];
     return data.cases.filter((c) => {
       // Status chip
       if (state.statusFilter !== 'ALL' && c.deletion_status !== state.statusFilter) {
@@ -198,6 +243,11 @@
     const filtered = getFilteredCases();
     const sorted = sortCases(filtered);
     const total = sorted.length;
+
+    // Update Filtered Count Badge in Export Menu
+    if (elements.exportFilteredBadge) {
+      elements.exportFilteredBadge.textContent = `${total}`;
+    }
 
     // Pagination bounds
     const totalPages = Math.ceil(total / state.pageSize) || 1;
@@ -307,6 +357,8 @@
 
   // 4. Modal Investigation Deep-Dive
   function openCaseModal(caseId) {
+    const data = getData();
+    if (!data || !data.cases) return;
     const c = data.cases.find((item) => item.case_id === caseId);
     if (!c) return;
 
@@ -456,6 +508,8 @@
 
   // 5. Render Overview Dashboard Widgets
   function renderOverviewDashboard() {
+    const data = getData();
+    if (!data) return;
     // Top Systems Risk List
     const topSystemsList = document.getElementById('top-systems-risk-list');
     if (topSystemsList && data.system_findings) {
@@ -510,8 +564,9 @@
 
   // 6. Render Policy Rules Table
   function renderRulesMatrix() {
+    const data = getData();
     const rulesBody = document.getElementById('rules-table-body');
-    if (!rulesBody || !data.rules) return;
+    if (!rulesBody || !data || !data.rules) return;
 
     rulesBody.innerHTML = data.rules
       .map((r) => {
@@ -536,7 +591,203 @@
       .join('');
   }
 
-  // 7. Event Listeners Initialization
+  // 7. CSV Export Logic (RFC 4180 Compliant + Unicode BOM + Safe Blob Download)
+  let isExporting = false;
+
+  function escapeCsvCell(val) {
+    if (val === null || val === undefined) return '';
+    const str = typeof val === 'string' ? val : String(val);
+    if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  function downloadCsv(filename, rows) {
+    if (isExporting) {
+      showToast('An export is already in progress.', 'warning');
+      return;
+    }
+    isExporting = true;
+
+    // Visual feedback
+    if (elements.exportBtnLabel) elements.exportBtnLabel.textContent = 'Generating...';
+    if (elements.exportDropdownToggle) elements.exportDropdownToggle.disabled = true;
+
+    try {
+      // RFC 4180: CRLF record separators
+      const csvBody = rows.map((row) => row.map(escapeCsvCell).join(',')).join('\r\n');
+      
+      // Prepend UTF-8 BOM (\uFEFF) for Microsoft Excel compatibility
+      const blob = new Blob(['\uFEFF' + csvBody], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        isExporting = false;
+        if (elements.exportBtnLabel) elements.exportBtnLabel.textContent = 'Export CSV';
+        if (elements.exportDropdownToggle) elements.exportDropdownToggle.disabled = false;
+      }, 500);
+
+      // Close dropdown menu if open
+      if (elements.exportMenu) {
+        elements.exportMenu.classList.remove('show');
+        if (elements.exportDropdownToggle) elements.exportDropdownToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      showToast(`Export complete: ${rows.length - 1} records downloaded to ${filename}`, 'success');
+    } catch (err) {
+      console.error('CSV Export Error:', err);
+      isExporting = false;
+      if (elements.exportBtnLabel) elements.exportBtnLabel.textContent = 'Export CSV';
+      if (elements.exportDropdownToggle) elements.exportDropdownToggle.disabled = false;
+      showToast(`Export failed: ${err.message || 'Unknown error'}`, 'error');
+    }
+  }
+
+  // Export 1: Official Submission Format — All 518 Cases
+  function exportSubmissionAll() {
+    const data = getData();
+    if (!data || !data.cases || data.cases.length === 0) {
+      showToast('No case data available for export.', 'warning');
+      return;
+    }
+    const sorted = [...data.cases].sort((a, b) => a.case_num - b.case_num);
+    const rows = [['case_id', 'deletion_status', 'steps_json']];
+    sorted.forEach((c) => {
+      const stepsStr = c.steps_json || JSON.stringify(c.steps || []);
+      rows.push([c.case_id, c.deletion_status, stepsStr]);
+    });
+    downloadCsv('residualq_output.csv', rows);
+  }
+
+  // Export 2: Official Submission Format — Filtered Cases
+  function exportSubmissionFiltered() {
+    const filtered = getFilteredCases();
+    if (filtered.length === 0) {
+      showToast('No cases match the active filter criteria. Export cancelled.', 'warning');
+      return;
+    }
+    const sorted = sortCases(filtered);
+    const rows = [['case_id', 'deletion_status', 'steps_json']];
+    sorted.forEach((c) => {
+      const stepsStr = c.steps_json || JSON.stringify(c.steps || []);
+      rows.push([c.case_id, c.deletion_status, stepsStr]);
+    });
+    const filterTag = state.statusFilter.toLowerCase();
+    downloadCsv(`residualq_submission_filtered_${filterTag}.csv`, rows);
+  }
+
+  // Export 3: Detailed Audit Report — All 518 Cases
+  function exportDetailedAll() {
+    const data = getData();
+    if (!data || !data.cases || data.cases.length === 0) {
+      showToast('No case data available for export.', 'warning');
+      return;
+    }
+    const sorted = [...data.cases].sort((a, b) => a.case_num - b.case_num);
+    const headers = [
+      'case_id',
+      'email',
+      'requested_at',
+      'reported_status',
+      'reported_at',
+      'audit_at',
+      'deletion_status',
+      'finding_count',
+      'remediation_count',
+      'verification_count',
+      'total_steps',
+      'systems',
+      'has_active_flow',
+      'has_restore_risk',
+      'has_exposed_pii',
+      'has_remaining_record',
+    ];
+    const rows = [headers];
+    sorted.forEach((c) => {
+      rows.push([
+        c.case_id,
+        c.email,
+        c.requested_at,
+        c.reported_status,
+        c.reported_at,
+        c.audit_at,
+        c.deletion_status,
+        c.finding_count,
+        c.remediation_count,
+        c.verification_count,
+        c.total_steps,
+        (c.systems || []).join('; '),
+        c.has_active_flow ? 'YES' : 'NO',
+        c.has_restore_risk ? 'YES' : 'NO',
+        c.has_exposed_pii ? 'YES' : 'NO',
+        c.has_remaining_record ? 'YES' : 'NO',
+      ]);
+    });
+    downloadCsv('residualq_audit_report_all.csv', rows);
+  }
+
+  // Export 4: Detailed Audit Report — Filtered Cases
+  function exportDetailedFiltered() {
+    const filtered = getFilteredCases();
+    if (filtered.length === 0) {
+      showToast('No cases match the active filter criteria. Export cancelled.', 'warning');
+      return;
+    }
+    const sorted = sortCases(filtered);
+    const headers = [
+      'case_id',
+      'email',
+      'requested_at',
+      'reported_status',
+      'reported_at',
+      'audit_at',
+      'deletion_status',
+      'finding_count',
+      'remediation_count',
+      'verification_count',
+      'total_steps',
+      'systems',
+      'has_active_flow',
+      'has_restore_risk',
+      'has_exposed_pii',
+      'has_remaining_record',
+    ];
+    const rows = [headers];
+    sorted.forEach((c) => {
+      rows.push([
+        c.case_id,
+        c.email,
+        c.requested_at,
+        c.reported_status,
+        c.reported_at,
+        c.audit_at,
+        c.deletion_status,
+        c.finding_count,
+        c.remediation_count,
+        c.verification_count,
+        c.total_steps,
+        (c.systems || []).join('; '),
+        c.has_active_flow ? 'YES' : 'NO',
+        c.has_restore_risk ? 'YES' : 'NO',
+        c.has_exposed_pii ? 'YES' : 'NO',
+        c.has_remaining_record ? 'YES' : 'NO',
+      ]);
+    });
+    const filterTag = state.statusFilter.toLowerCase();
+    downloadCsv(`residualq_audit_report_filtered_${filterTag}.csv`, rows);
+  }
+
+  // 8. Event Listeners Initialization
   function initEventListeners() {
     // Filter Chips
     elements.filterChips.forEach((chip) => {
@@ -594,43 +845,83 @@
       if (e.target === elements.modalOverlay) closeModal();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && elements.modalOverlay.classList.contains('open')) {
-        closeModal();
+      if (e.key === 'Escape') {
+        if (elements.modalOverlay.classList.contains('open')) {
+          closeModal();
+        }
+        if (elements.exportMenu && elements.exportMenu.classList.contains('show')) {
+          elements.exportMenu.classList.remove('show');
+          if (elements.exportDropdownToggle) elements.exportDropdownToggle.setAttribute('aria-expanded', 'false');
+        }
       }
     });
 
-    // Export Filtered Table
-    if (elements.exportBtn) {
-      elements.exportBtn.addEventListener('click', () => {
-        const filtered = getFilteredCases();
-        const csvRows = [
-          ['case_id', 'email', 'requested_at', 'reported_status', 'deletion_status', 'findings_count', 'steps_count'],
-        ];
-        filtered.forEach((c) => {
-          csvRows.push([
-            c.case_id,
-            c.email,
-            c.requested_at,
-            c.reported_status,
-            c.deletion_status,
-            c.finding_count,
-            c.total_steps,
-          ]);
-        });
-        const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map((e) => e.join(',')).join('\n');
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', `ghost_data_export_${state.statusFilter.toLowerCase()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    // Dropdown Toggle & Outside Click
+    if (elements.exportDropdownToggle && elements.exportMenu) {
+      elements.exportDropdownToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = elements.exportMenu.classList.contains('show');
+        if (isOpen) {
+          elements.exportMenu.classList.remove('show');
+          elements.exportDropdownToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          elements.exportMenu.classList.add('show');
+          elements.exportDropdownToggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!elements.exportDropdownToggle.contains(e.target) && !elements.exportMenu.contains(e.target)) {
+          elements.exportMenu.classList.remove('show');
+          elements.exportDropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    // Export Button Click Listeners
+    if (elements.exportSubmissionAllBtn) {
+      elements.exportSubmissionAllBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportSubmissionAll();
+      });
+    }
+
+    if (elements.exportSubmissionFilteredBtn) {
+      elements.exportSubmissionFilteredBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportSubmissionFiltered();
+      });
+    }
+
+    if (elements.exportDetailedAllBtn) {
+      elements.exportDetailedAllBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportDetailedAll();
+      });
+    }
+
+    if (elements.exportDetailedFilteredBtn) {
+      elements.exportDetailedFilteredBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportDetailedFiltered();
       });
     }
   }
 
-  // App Initialization
+  // App Initialization with polling retry for data bundle
+  let initAttempts = 0;
   function init() {
+    const data = getData();
+    if (!data || !data.cases) {
+      initAttempts++;
+      if (initAttempts < 100) {
+        setTimeout(init, 50);
+      } else {
+        console.error('ResidualQ bundle failed to load within timeout.');
+      }
+      return;
+    }
     initNavigation();
     renderOverviewDashboard();
     renderRulesMatrix();

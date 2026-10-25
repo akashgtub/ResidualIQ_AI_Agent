@@ -39,6 +39,19 @@ python3 code/main.py
 
 The blank template at `dataset/output.csv` is provided as a reference. Your final generated file for submission must be the root-level `output.csv`.
 
+### Web Dashboard — ResidualQ AI Agent
+
+Launch the interactive audit intelligence dashboard:
+
+```bash
+python -m http.server 8080 --directory web
+```
+
+Then navigate to `http://localhost:8080/index.html` in your browser.
+- **Product Name**: **ResidualQ AI Agent**
+- **Tagline**: *AI-Powered Data Deletion Auditing & Verification*
+- **Capabilities**: Case Explorer with real-time search and status filtering, Case Investigation Dossier modal with full timeline and JSON export, Risk Topology radar, Policy Rules matrix, and CSV exports (Official Submission format `case_id,deletion_status,steps_json` and Detailed Audit Reports).
+
 
 ## Dataset
 

@@ -1,4 +1,4 @@
-/* Ghost Data Intelligence — Enterprise Light Theme Design System */
+/* ResidualQ AI Agent — AI-Powered Data Deletion Auditing & Verification */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
@@ -143,6 +143,14 @@ html, body {
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.8px;
+}
+
+.brand-tagline {
+  font-size: 10px;
+  color: var(--text-secondary);
+  line-height: 1.25;
+  margin-top: 3px;
+  display: block;
 }
 
 .sidebar-nav {
@@ -1216,4 +1224,156 @@ html, body {
   .header-search {
     width: 180px;
   }
+}
+
+/* Export Dropdown Menu & Toast Feedback */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-modal);
+  padding: 6px;
+  min-width: 280px;
+  z-index: 120;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeInDown 0.18s ease-out;
+}
+
+.export-menu.open {
+  display: flex;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.export-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+  padding: 8px 10px 4px 10px;
+}
+
+.export-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.export-item:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.export-item-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.export-item-badge {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: var(--surface-alt);
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+.export-divider {
+  height: 1px;
+  background-color: var(--border-light);
+  margin: 4px 0;
+}
+
+/* Toast Notifications Container */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  min-width: 280px;
+  max-width: 420px;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-success {
+  border-left: 4px solid var(--success);
+}
+
+.toast-success svg {
+  color: var(--success);
+}
+
+.toast-warning {
+  border-left: 4px solid var(--warning);
+}
+
+.toast-warning svg {
+  color: var(--warning);
+}
+
+.toast-error {
+  border-left: 4px solid var(--critical);
+}
+
+.toast-error svg {
+  color: var(--critical);
 }
